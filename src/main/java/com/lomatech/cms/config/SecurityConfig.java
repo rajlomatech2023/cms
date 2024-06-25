@@ -1,8 +1,13 @@
 package com.lomatech.cms.config;
 
+import com.lomatech.cms.authentication.AuthenticationFilter;
 import com.lomatech.cms.authentication.CustomUserDetailsService;
+import com.lomatech.cms.user.UserService;
+import com.lomatech.cms.user.impl.UserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,6 +34,9 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Autowired
+    private UserService userService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
@@ -43,6 +51,7 @@ public class SecurityConfig {
                 .permitAll()
                 .anyRequest()
                 .authenticated())
+                .addFilter(getAuthenticationFilter())
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
                 //.formLogin(AbstractAuthenticationFilterConfigurer::permitAll);
 
@@ -65,7 +74,19 @@ public class SecurityConfig {
     }
 
     @Bean
+    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder){
+        authenticationManagerBuilder.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder());
+    }
+
+    @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    public AuthenticationFilter getAuthenticationFilter() throws Exception{
+        final AuthenticationFilter authenticationFilter = new AuthenticationFilter();
+        authenticationFilter.setFilterProcessesUrl("/login");
+
+        return authenticationFilter;
     }
 }

@@ -1,11 +1,19 @@
 package com.lomatech.cms.user;
 
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.Entity;
 import java.util.Collection;
 import java.util.List;
 
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Entity
+@TableName("users")
 public class Users implements UserDetails {
 
     private String userName;
@@ -13,10 +21,13 @@ public class Users implements UserDetails {
     private List<GrantedAuthority> authorities;
     private boolean accountNonExpired;
 
-    public static Users userDetailsBuilder(){
-        return new Users();
-    }
 
+    public Users(String userName, String password, List<GrantedAuthority> authorities, boolean accountNonExpired) {
+        this.userName = userName;
+        this.password = password;
+        this.authorities = authorities;
+        this.accountNonExpired = accountNonExpired;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

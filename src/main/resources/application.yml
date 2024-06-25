@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: cms
+  datasource:
+    url: jdbc:mysql://34.124.161.23:18085/loma_cms_dev
+    username: raj
+    password: Qn6tpn>o1R49b3A)4!11jHn}}S-s`>U>
+    driver-class-name: com.mysql.cj.jdbc.Driver
