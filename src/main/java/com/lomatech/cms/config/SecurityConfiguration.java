@@ -48,6 +48,10 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults()) // Apply CORS
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/admin")
+                        .hasRole("admin")
+                        .requestMatchers("/auth/user")
+                        .hasRole("user")
                         .requestMatchers("/auth/addUser", "/auth/login")
                         .permitAll()// Permit all requests to certain URLs
                         .anyRequest().authenticated()) // Require authentication for all other requests
