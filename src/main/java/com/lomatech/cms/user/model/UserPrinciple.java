@@ -15,7 +15,7 @@ public class UserPrinciple implements UserDetails {
 
     String userName;
     String password;
-    private Set<GrantedAuthority> authorities;
+    private final Set<GrantedAuthority> authorities;
 
     public UserPrinciple(Users user) {
         this.userName = user.getUserName();

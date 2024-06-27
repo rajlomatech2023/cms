@@ -25,8 +25,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private ApplicationContext applicationContext;
 
-    // Method to lazily fetch the UserService bean from the ApplicationContext
-    // This is done to avoid Circular Dependency issues
     private UserService getUserService() {
         return applicationContext.getBean(UserService.class);
     }
@@ -36,12 +34,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Extracting token from the request header
         String authHeader = request.getHeader("Authorization");
         String token = null;
-        String userName = null;
+         String userName = null;
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            // Extracting the token from the Authorization header
             token = authHeader.substring(7);
-            // Extracting username from the token
             userName = jwtService.extractUserName(token);
         }
 
@@ -51,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UserDetails userDetails = getUserService().loadUserByUsername(userName);
 
             // Validating the token with loaded UserDetails
-            if (jwtService.validateToken(token, userDetails)) {
+            if (Boolean.TRUE.equals(jwtService.validateToken(token, userDetails))) {
                 // Creating an authentication token using UserDetails
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 // Setting authentication details
@@ -63,5 +59,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Proceeding with the filter chain
         filterChain.doFilter(request, response);
-    }
+        }
 }

@@ -5,16 +5,15 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 @Component
 public class JwtService {
@@ -23,10 +22,6 @@ public class JwtService {
 
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
-
-    // Secret Key for signing the JWT. It should be kept private.
-    //private static final String SECRET = "TmV3U2VjcmV0S2V5Rm9ySldUU2lnbmluZ1B1cnBvc2VzMTIzNDU2Nzg=\r\n" + "";
-
 
     // Generates a JWT token for the given userName.
     public String generateToken(String userName) {
@@ -82,9 +77,12 @@ public class JwtService {
     //return-> Claims object containing all claims.
     private Claims extractAllClaims(String token) {
         // Parse and return all claims from the token
-        return Jwts.parser()
+        return Jwts
+                .parserBuilder()
                 .setSigningKey(getSignKey())
-                .parseClaimsJws(token).getBody();
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
 
